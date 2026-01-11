@@ -1,0 +1,483 @@
+====================================================================================================
+                                   📊 EXAM SCORE PREDICTION
+                              Comprehensive Exploratory Data Analysis
+====================================================================================================
+
+ 
+
+
+
+====================================================================================================
+SECTION 1: DATA LOADING & INITIAL INSPECTION
+====================================================================================================
+
+📦 Dataset Dimensions:
+Dataset               Rows    Columns     Size Factor
+----------------------------------------------------
+Training           630,000         13      (baseline)
+Test               270,000         12         (42.9%)
+Original            20,000         13          (3.2%)
+
+📋 Column Data Types:
+id                    int64
+age                   int64
+gender               object
+course               object
+study_hours         float64
+class_attendance    float64
+internet_access      object
+sleep_hours         float64
+sleep_quality        object
+study_method         object
+facility_rating      object
+exam_difficulty      object
+exam_score          float64
+dtype: object
+
+🔍 Missing Values:
+   ✅ EXCELLENT: No missing values detected!
+
+📊 First 5 Rows:
+id	age	gender	course	study_hours	class_attendance	internet_access	sleep_hours	sleep_quality	study_method	facility_rating	exam_difficulty	exam_score
+0	0	21	female	b.sc	7.91	98.8	no	4.9	average	online videos	low	easy	78.3
+1	1	18	other	diploma	4.95	94.8	yes	4.7	poor	self-study	medium	moderate	46.7
+2	2	20	female	b.sc	4.68	92.6	yes	5.8	poor	coaching	high	moderate	99.0
+3	3	19	male	b.sc	2.00	49.5	yes	8.3	average	group study	high	moderate	63.9
+4	4	23	male	bca	7.65	86.9	yes	9.6	good	self-study	high	easy	100.0
+
+📈 Statistical Summary:
+ 	count	mean	std	min	25%	50%	75%	max
+id	630000.000000	314999.500000	181865.479132	0.000000	157499.750000	314999.500000	472499.250000	629999.000000
+age	630000.000000	20.545821	2.260238	17.000000	19.000000	21.000000	23.000000	24.000000
+study_hours	630000.000000	4.002337	2.359880	0.080000	1.970000	4.000000	6.050000	7.910000
+class_attendance	630000.000000	71.987261	17.430098	40.600000	57.000000	72.600000	87.200000	99.400000
+sleep_hours	630000.000000	7.072758	1.744811	4.100000	5.600000	7.100000	8.600000	9.900000
+exam_score	630000.000000	62.506672	18.916884	19.599000	48.800000	62.600000	76.300000	100.000000
+
+====================================================================================================
+SECTION 2: TARGET VARIABLE (EXAM_SCORE) ANALYSIS
+====================================================================================================
+
+📈 Descriptive Statistics:
+   Mean                :    62.51
+   Median              :    62.60
+   Std Dev             :    18.92
+   Min                 :    19.60
+   Max                 :   100.00
+   Range               :    80.40
+   Skewness            :    -0.05
+   Kurtosis            :    -0.62
+   25th Percentile     :    48.80
+   75th Percentile     :    76.30
+   IQR                 :    27.50
+
+🔬 Shapiro-Wilk Normality Test (n=5000 sample):
+   Test Statistic: 0.9898
+   P-value:        1.5531e-18
+   Decision:       ❌ Reject H₀ (Non-normal)
+   Note:           With large N, test is hypersensitive. Visual check is more reliable.
+
+🔄 Synthetic vs Original Data Comparison:
+Metric                Synthetic (Train)           Original         Difference
+----------------------------------------------------------------------------
+Mean                              62.51              62.51               0.01
+Median                            62.60              62.60               0.00
+Std Dev                           18.92              18.91               0.01
+Min                               19.60              19.60               0.00
+Max                              100.00             100.00               0.00
+Skewness                          -0.05              -0.05               0.00
+Kurtosis                          -0.62              -0.62               0.00
+
+====================================================================================================
+SECTION 3: NUMERIC FEATURES COMPREHENSIVE ANALYSIS
+====================================================================================================
+
+📊 Correlation with Target (exam_score):
+Feature               Pearson (r)   Spearman (ρ)   R² (Variance)     Strength
+---------------------------------------------------------------------------
+study_hours                0.7623         0.7698          58.11%  Very Strong
+class_attendance           0.3610         0.3515          13.03%     Moderate
+sleep_hours                0.1674         0.1600           2.80%         Weak
+age                        0.0105         0.0072           0.01%   Negligible
+
+🔬 Statistical Tests for Numeric Features:
+Feature                             Range        Outliers     Skewness     Kurtosis
+---------------------------------------------------------------------------------
+study_hours                  [0.08, 7.91]       0 (0.00%)        0.009       -1.212
+class_attendance           [40.60, 99.40]       0 (0.00%)       -0.096       -1.189
+sleep_hours                  [4.10, 9.90]       0 (0.00%)       -0.040       -1.222
+age                        [17.00, 24.00]       0 (0.00%)       -0.024       -1.204
+
+====================================================================================================
+SECTION 4: CATEGORICAL FEATURES COMPREHENSIVE ANALYSIS
+====================================================================================================
+
+📋 Categorical Features Distribution Summary:
+Feature                Unique          Most Common    Frequency    Balance
+------------------------------------------------------------------------
+gender                      3                other        33.5%     100.0%
+course                      7               b.tech        20.8%      97.6%
+internet_access             2                  yes        92.0%      40.3%
+sleep_quality               3                 poor        33.9%     100.0%
+study_method                5             coaching        20.9%     100.0%
+facility_rating             3               medium        34.0%     100.0%
+exam_difficulty             3             moderate        56.2%      88.5%
+
+Note: Balance = 100% means perfectly uniform distribution, 0% means one category dominates
+
+📈 Categorical Features Impact on Exam Score:
+Feature               F-statistic      p-value    η² (Effect)    Significance
+---------------------------------------------------------------------------
+gender                      55.43     8.51e-25         0.0002  ⭐⭐⭐ Highly Sig
+course                      32.52     2.12e-39         0.0003  ⭐⭐⭐ Highly Sig
+internet_access              0.13     7.23e-01         0.0000       ❌ Not Sig
+sleep_quality            18739.19     0.00e+00         0.0561  ⭐⭐⭐ Highly Sig
+study_method              8304.29     0.00e+00         0.0501  ⭐⭐⭐ Highly Sig
+facility_rating          11664.97     0.00e+00         0.0357  ⭐⭐⭐ Highly Sig
+exam_difficulty             29.74     1.21e-13         0.0001  ⭐⭐⭐ Highly Sig
+
+🔍 Detailed Category Breakdown (Sorted by Effect Size):
+
+======================================================================
+SLEEP QUALITY
+======================================================================
+Category                    Mean Score    Std Dev        Count   % of Total
+----------------------------------------------------------------------
+poor                             57.00      18.42      213,675        33.9%
+average                          62.66      18.60      203,236        32.3%
+good                             67.88      18.12      213,089        33.8%
+
+📊 Score Range (Max - Min): 10.89 points
+📈 Best Category: good (67.88)
+📉 Worst Category: poor (57.00)
+
+======================================================================
+STUDY METHOD
+======================================================================
+Category                    Mean Score    Std Dev        Count   % of Total
+----------------------------------------------------------------------
+self-study                       57.70      18.56      131,131        20.8%
+online videos                    59.73      18.73      121,077        19.2%
+group study                      60.53      18.22      123,009        19.5%
+mixed                            65.10      18.22      123,086        19.5%
+coaching                         69.27      18.45      131,697        20.9%
+
+📊 Score Range (Max - Min): 11.57 points
+📈 Best Category: coaching (69.27)
+📉 Worst Category: self-study (57.70)
+
+======================================================================
+FACILITY RATING
+======================================================================
+Category                    Mean Score    Std Dev        Count   % of Total
+----------------------------------------------------------------------
+low                              57.95      18.56      212,378        33.7%
+medium                           63.03      18.64      214,082        34.0%
+high                             66.71      18.53      203,540        32.3%
+
+📊 Score Range (Max - Min): 8.75 points
+📈 Best Category: high (66.71)
+📉 Worst Category: low (57.95)
+
+======================================================================
+COURSE
+======================================================================
+Category                    Mean Score    Std Dev        Count   % of Total
+----------------------------------------------------------------------
+ba                               61.89      18.77       61,989         9.8%
+b.sc                             62.30      19.30      111,554        17.7%
+diploma                          62.40      19.09       49,924         7.9%
+b.tech                           62.52      18.86      131,236        20.8%
+b.com                            62.54      18.40      110,932        17.6%
+bca                              62.59      18.92       88,721        14.1%
+bba                              63.23      19.16       75,644        12.0%
+
+📊 Score Range (Max - Min): 1.35 points
+📈 Best Category: bba (63.23)
+📉 Worst Category: ba (61.89)
+
+======================================================================
+GENDER
+======================================================================
+Category                    Mean Score    Std Dev        Count   % of Total
+----------------------------------------------------------------------
+male                             62.18      18.77      210,593        33.4%
+female                           62.56      18.89      208,310        33.1%
+other                            62.78      19.09      211,097        33.5%
+
+📊 Score Range (Max - Min): 0.61 points
+📈 Best Category: other (62.78)
+📉 Worst Category: male (62.18)
+
+
+
+====================================================================================================
+SECTION 5: CORRELATION ANALYSIS & FEATURE INTERACTIONS
+====================================================================================================
+
+🔄 Encoding categorical features for correlation analysis...
+
+⚠️  Multicollinearity Check (|r| > 0.7 between features):
+Feature 1                 Feature 2                     Correlation          Action
+----------------------------------------------------------------------------------
+✅ No severe multicollinearity detected (all |r| < 0.7)
+
+🔗 Feature Interaction Exploration:
+
+📊 Interaction Feature Analysis:
+Feature 1            Feature 2              Interaction r     Improvement         Verdict
+---------------------------------------------------------------------------------------
+study_hours          class_attendance              0.7967         +0.0345     ⚠️ Marginal
+class_attendance     sleep_hours                   0.3607         -0.0003   ❌ Not helpful
+study_hours          age                           0.7453         -0.0169   ❌ Not helpful
+study_hours          sleep_hours                   0.7362         -0.0261   ❌ Not helpful
+
+Note: Positive improvement means interaction feature adds predictive power beyond individual features
+
+====================================================================================================
+SECTION 6: DIMENSIONALITY REDUCTION (PCA & t-SNE)
+====================================================================================================
+
+🔬 Principal Component Analysis (PCA):
+
+📊 Variance Explained by Each Component:
+Component           Variance   Cumulative
+-----------------------------------------
+PC1                  27.80%      27.80%
+PC2                  24.98%      52.78%
+PC3                  24.44%      77.22%
+PC4                  22.78%     100.00%
+
+📐 Component Loadings (Feature Contributions):
+                    PC1    PC2
+study_hours       0.653 -0.071
+class_attendance  0.625 -0.097
+sleep_hours       0.416  0.025
+age               0.097  0.992🗺️  t-SNE Dimensionality Reduction:
+   Using sample size: 5,000 (for computational efficiency)
+   Running t-SNE with perplexity=30, n_iter=1000...
+   ✓ t-SNE completed in 19.6 seconds
+
+====================================================================================================
+SECTION 7: STUDENT SEGMENTATION & PROFILING
+====================================================================================================
+
+🎯 Performance Segment Profile Analysis:
+                     study_hours_mean  study_hours_std  class_attendance_mean  \
+performance_segment                                                             
+Low (<60)                        2.25             1.65                  66.51   
+Medium (60-75)                   4.62             1.82                  73.52   
+High (75-85)                     5.89             1.49                  77.11   
+Excellent (85+)                  6.69             1.15                  82.08   
+
+                     class_attendance_std  sleep_hours_mean  sleep_hours_std  \
+performance_segment                                                            
+Low (<60)                           16.91              6.82             1.74   
+Medium (60-75)                      17.02              7.14             1.73   
+High (75-85)                        15.98              7.26             1.72   
+Excellent (85+)                     14.47              7.57             1.69   
+
+                     exam_score_count  exam_score_mean  exam_score_std  
+performance_segment                                                     
+Low (<60)                      283184            45.35           10.41  
+Medium (60-75)                 176553            67.40            4.30  
+High (75-85)                    87938            79.68            2.89  
+Excellent (85+)                 82325            92.71            5.07  
+
+📊 Segment Distribution:
+Low (<60)           : 283,184 ( 44.9%) ██████████████████████
+Medium (60-75)      : 176,553 ( 28.0%) ██████████████
+High (75-85)        :  87,938 ( 14.0%) ██████
+Excellent (85+)     :  82,325 ( 13.1%) ██████
+
+🔍 Study × Attendance Interaction Analysis:
+attendance_level  Low (<70%)  Medium (70-85%)  High (85%+)
+study_intensity                                           
+Low (<3h)               41.7             49.4         54.3
+Medium (3-6h)           60.3             67.3         72.9
+High (6h+)              75.7             82.4         86.8
+
+Key Findings:
+  • Best combination: High study + High attendance = 86.8 avg score
+  • Worst combination: Low study + Low attendance = 41.7 avg score
+  • Difference: 45.0 points
+  • High study alone: 75.7 (can compensate for low attendance)
+  • High attendance alone: 54.3 (not sufficient without study)
+ 
+ ====================================================================================================
+SECTION 8: OUTLIER DETECTION & ANOMALY ANALYSIS
+====================================================================================================
+
+🔍 Running Isolation Forest (contamination=5%)...
+   ✓ Detection complete
+   🚨 Anomalies found: 31,500 (5.00%)
+
+📊 Anomaly vs Normal Comparison:
+Metric                             Normal         Anomaly      Difference
+------------------------------------------------------------------------
+Exam Score                          62.55           61.71           -0.83
+Study Hours                          4.00            4.11           +0.11
+Class Attendance                    72.03           71.22           -0.81
+Sleep Hours                          7.10            6.65           -0.45
+Age                                 20.57           20.04           -0.54
+
+🔬 Detailed Anomaly Characteristics:
+
+Top 10 Most Anomalous Cases:
+    id  study_hours  class_attendance  sleep_hours  age  exam_score  anomaly_score
+250460         7.90              40.6          4.1   17      76.800      -0.664661
+ 35218         7.91              40.6          9.9   17      88.800      -0.662409
+ 53171         7.91              40.6          9.9   17      71.000      -0.662409
+ 16106         7.91              41.2          9.9   17      79.300      -0.661961
+ 69819         0.08              40.6          4.1   17      19.599      -0.659004
+457600         0.08              40.6          4.1   17      35.400      -0.659004
+231975         7.75              41.2          9.9   17      97.400      -0.657183
+ 91933         7.91              43.0          9.9   17     100.000      -0.657042
+175479         7.91              43.2          9.9   17      71.500      -0.657042
+485588         7.91              42.3          9.9   17      67.600      -0.657042
+
+🏷️ Anomaly Type Classification:
+   High score, low effort (talented?): 140 (0.4%)
+   Low score, high effort (struggling?): 85 (0.3%)
+   Extreme feature values: 25,322 (80.4%)
+   Other multivariate anomalies: 5,953
+====================================================================================================
+SECTION 9: DATA QUALITY & CONSISTENCY VALIDATION
+====================================================================================================
+
+✓ Logical Constraint Validation:
+Feature                                  Range   Invalid Count     Status
+------------------------------------------------------------------------
+study_hours                  [0, 24] hours/day               0     ✅ PASS
+class_attendance           [0, 100] percentage               0     ✅ PASS
+sleep_hours                  [0, 24] hours/day               0     ✅ PASS
+age                            [10, 100] years               0     ✅ PASS
+exam_score                     [0, 100] points               0     ✅ PASS
+
+✓ Duplicate Records Check:
+   Duplicate rows (excluding ID): 0
+   ✅ PASS: No duplicates detected
+
+✓ Unique Identifier Check:
+   Duplicate IDs: 0
+   ✅ PASS: All IDs are unique
+
+🔬 Synthetic Data Artifact Detection:
+Feature                 KS Test p-value                Assessment
+-----------------------------------------------------------------
+study_hours                      0.0000       ✅ Natural variation
+class_attendance                 0.0000       ✅ Natural variation
+sleep_hours                      0.0000       ✅ Natural variation
+age                              0.0000       ✅ Natural variation
+
+📊 Feature Value Diversity:
+Feature                      Type   Unique Values      Uniqueness
+----------------------------------------------------------------
+age                       Numeric               8           0.00%
+gender                Categorical               3           0.00%
+course                Categorical               7           0.00%
+study_hours               Numeric             792           0.13%
+class_attendance          Numeric             617           0.10%
+internet_access       Categorical               2           0.00%
+sleep_hours               Numeric              66           0.01%
+sleep_quality         Categorical               3           0.00%
+study_method          Categorical               5           0.00%
+facility_rating       Categorical               3           0.00%
+exam_difficulty       Categorical               3           0.00%
+exam_score            Categorical             805           0.13%
+
+🔄 Train vs Test Distribution Comparison:
+Feature                   Train Mean       Test Mean      Difference     Status
+-----------------------------------------------------------------------------
+study_hours                     4.00            4.00           +0.00       ✅ OK
+class_attendance               71.99           71.98           +0.00       ✅ OK
+sleep_hours                     7.07            7.07           +0.00       ✅ OK
+age                            20.55           20.54           +0.00       ✅ OK
+
+📊 Categorical Feature Distribution (Train vs Test):
+
+gender:
+        Train %  Test %  Difference
+gender                             
+female    33.07   33.04       -0.03
+male      33.43   33.59        0.16
+other     33.51   33.37       -0.13
+
+course:
+         Train %  Test %  Difference
+course                              
+b.tech     20.83   20.91        0.08
+b.sc       17.71   17.67       -0.04
+b.com      17.61   17.53       -0.08
+bca        14.08   14.11        0.02
+bba        12.01   11.89       -0.12
+ba          9.84    9.95        0.11
+diploma     7.92    7.94        0.01
+
+internet_access:
+                 Train %  Test %  Difference
+internet_access                             
+yes                91.97    92.1        0.13
+no                  8.03     7.9       -0.13
+
+📈 Statistical Summary: Train vs Test vs Original:
+                  Train   Test  Original  Train-Test Diff  Train-Orig Diff
+age               20.55  20.54     20.47              0.0             0.07
+class_attendance  71.99  71.98     70.02              0.0             1.97
+exam_score        62.51    NaN     62.51              NaN             0.01
+sleep_hours        7.07   7.07      7.01              0.0             0.06
+study_hours        4.00   4.00      4.01              0.0             0.01
+
+
+ 
+
+====================================================================================================
+SECTION 10: FEATURE IMPORTANCE & FINAL RECOMMENDATIONS
+====================================================================================================
+
+🌲 Training Random Forest for Feature Importance...
+   ✓ Model trained (R² score: 0.8010)
+
+📊 Feature Importance Ranking:
+Rank   Feature                     Importance   Cumulative        Category
+------------------------------------------------------------------------
+1      study_hours                     0.7360       73.60%         Numeric
+2      class_attendance                0.1196       85.56%         Numeric
+3      sleep_quality_enc               0.0468       90.23%     Categorical
+4      study_method_enc                0.0390       94.13%     Categorical
+5      facility_rating_enc             0.0301       97.14%     Categorical
+6      sleep_hours                     0.0240       99.53%         Numeric
+7      age                             0.0017       99.70%         Numeric
+8      course_enc                      0.0015       99.85%     Categorical
+9      gender_enc                      0.0006       99.91%     Categorical
+10     exam_difficulty_enc             0.0005       99.97%     Categorical
+11     internet_access_enc             0.0003      100.00%     Categorical
+
+🎯 Feature Importance Tiers:
+
+======================================================================
+TIER 1: CRITICAL (>10% importance)
+======================================================================
+   • study_hours                 73.60%
+   • class_attendance            11.96%
+
+======================================================================
+TIER 2: HIGH IMPACT (2-10% importance)
+======================================================================
+   • sleep_quality_enc            4.68%
+   • study_method_enc             3.90%
+   • facility_rating_enc          3.01%
+   • sleep_hours                  2.40%
+
+======================================================================
+TIER 3: MARGINAL (<2% importance)
+======================================================================
+   • age                          0.17%
+   • course_enc                   0.15%
+   • gender_enc                   0.06%
+   • exam_difficulty_enc          0.05%
+   • internet_access_enc          0.03%
+
+💡 Feature Selection Recommendations:
+   • Keep TIER 1 + TIER 2: 6 features (covers 99.5%)
+   • Consider dropping TIER 3: 5 features (only 0.5% importance)
